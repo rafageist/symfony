@@ -20,15 +20,8 @@ class UuidV4 extends Uuid
 {
     protected const TYPE = 4;
 
-    /** @var int<0, max> */
-    private static ?int $PID = null;
-
     public function __construct(?string $uuid = null)
     {
-        if (self::$PID === null) {
-            self::$PID = getmypid();
-        }
-
         if (null === $uuid) {
             // Generate 36 random hex characters (144 bits)
             // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -41,7 +34,7 @@ class UuidV4 extends Uuid
             $uuid[14] = '4';
             // Set the UUID variant: the 19th char must be in [8, 9, a, b]
             // xxxxxxxx-xxxx-4xxx-?xxx-xxxxxxxxxxxx
-            $uuid[19] = ['8','9','a','b'][self::$PID % 4];
+            $uuid[19] = ['8', '9', 'a', 'b'][ord($uuid[19]) & 0x3];
             $this->uid = $uuid;
         } else {
             parent::__construct($uuid, true);
